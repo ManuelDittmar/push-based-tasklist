@@ -1,5 +1,9 @@
 package org.camunda.consulting.push_based_tasklist.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.camunda.consulting.push_based_tasklist.domain.CustomUserTask;
 import org.camunda.consulting.push_based_tasklist.domain.CustomUserTaskFilter;
 import org.camunda.consulting.push_based_tasklist.domain.TaskUpdateRequest;
@@ -11,52 +15,52 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
 
-@Controller
+@RestController
 @RequestMapping("/tasks")
+@Tag(name = "User Tasks", description = "APIs for managing user tasks in Camunda")
 public class UserTaskController {
 
     @Autowired
     private TaskListService taskListService;
 
+    @Operation(summary = "Get user task by ID", description = "Retrieves a specific user task by its ID.")
+    @ApiResponse(responseCode = "200", description = "Successfully retrieved user task")
+    @ApiResponse(responseCode = "404", description = "Task not found")
     @GetMapping("/{taskId}")
-    public ResponseEntity<CustomUserTask> getUserTask(@PathVariable String taskId) {
+    public ResponseEntity<CustomUserTask> getUserTask(
+            @Parameter(description = "Task ID") @PathVariable String taskId) {
         CustomUserTask customUserTask = taskListService.getUserTask(taskId);
-        if (customUserTask == null) {
-            return ResponseEntity.notFound().build();
-        }
-        return ResponseEntity.ok(customUserTask);
+        return customUserTask != null ? ResponseEntity.ok(customUserTask) : ResponseEntity.notFound().build();
     }
 
+    @Operation(summary = "Get task change logs", description = "Fetches the history of changes for a specific task.")
     @GetMapping("/{taskId}/history")
     public ResponseEntity<Page<UserTaskChangeLog>> getTaskChangeLogs(
-            @PathVariable String taskId,
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size) {
+            @Parameter(description = "Task ID") @PathVariable String taskId,
+            @Parameter(description = "Page number") @RequestParam(defaultValue = "0") int page,
+            @Parameter(description = "Page size") @RequestParam(defaultValue = "10") int size) {
 
-        if(!taskListService.taskExists(taskId)) {
+        if (!taskListService.taskExists(taskId)) {
             return ResponseEntity.notFound().build();
         }
-
         Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "timestamp"));
-
-        Page<UserTaskChangeLog> changeLogs = taskListService.getHistory(taskId, pageable);
-        return ResponseEntity.ok(changeLogs);
+        return ResponseEntity.ok(taskListService.getHistory(taskId, pageable));
     }
 
+    @Operation(summary = "Get filtered user tasks", description = "Retrieve tasks based on multiple filter parameters.")
     @GetMapping
     public ResponseEntity<Page<CustomUserTask>> getUserTasks(
-            @RequestParam(required = false) String customCaseId,
-            @RequestParam(required = false) String source,
-            @RequestParam(required = false) String assignee,
-            @RequestParam(required = false) String taskState,
-            @RequestParam(required = false) Integer priority,
-            @RequestParam(required = false) Integer page,
-            @RequestParam(required = false) Integer size) {
+            @Parameter(description = "Custom Case ID") @RequestParam(required = false) String customCaseId,
+            @Parameter(description = "Task Source") @RequestParam(required = false) String source,
+            @Parameter(description = "Assignee") @RequestParam(required = false) String assignee,
+            @Parameter(description = "Task State") @RequestParam(required = false) String taskState,
+            @Parameter(description = "Priority") @RequestParam(required = false) Integer priority,
+            @Parameter(description = "Page number") @RequestParam(required = false) Integer page,
+            @Parameter(description = "Page size") @RequestParam(required = false) Integer size) {
 
         CustomUserTaskFilter filter = new CustomUserTaskFilter();
         filter.setCustomCaseId(customCaseId);
@@ -65,51 +69,51 @@ public class UserTaskController {
         filter.setTaskState(taskState);
         filter.setPriority(priority);
 
-        Page<CustomUserTask> tasks = taskListService.getFilteredUserTasks(filter, page != null ? page : 0, size != null ? size : 10);
-        return ResponseEntity.ok(tasks);
+        return ResponseEntity.ok(taskListService.getFilteredUserTasks(filter, page != null ? page : 0, size != null ? size : 10));
     }
 
-
+    @Operation(summary = "Delete user task", description = "Deletes a task by its ID.")
+    @ApiResponse(responseCode = "204", description = "Task successfully deleted")
+    @ApiResponse(responseCode = "404", description = "Task not found")
     @DeleteMapping("/{taskId}")
-    public ResponseEntity<Void> deleteUserTask(@PathVariable String taskId) {
+    public ResponseEntity<Void> deleteUserTask(
+            @Parameter(description = "Task ID") @PathVariable String taskId) {
         try {
             taskListService.deleteUserTask(taskId);
+            return ResponseEntity.noContent().build();
         } catch (Exception e) {
             return ResponseEntity.notFound().build();
         }
-        return ResponseEntity.noContent().build();
     }
 
+    @Operation(summary = "Update user task", description = "Updates an existing task.")
     @PutMapping("/{taskId}")
     public ResponseEntity<Void> updateUserTask(
-            @PathVariable String taskId,
+            @Parameter(description = "Task ID") @PathVariable String taskId,
             @RequestBody TaskUpdateRequest taskUpdateRequest) {
         try {
             taskListService.updateUserTask(taskId, taskUpdateRequest);
+            return ResponseEntity.noContent().build();
         } catch (Exception e) {
             return ResponseEntity.notFound().build();
         }
-        return ResponseEntity.noContent().build();
     }
 
+    @Operation(summary = "Complete user task", description = "Marks a task as completed.")
     @PostMapping("/{taskId}/complete")
     public ResponseEntity<Void> completeUserTask(
-            @PathVariable String taskId,
+            @Parameter(description = "Task ID") @PathVariable String taskId,
             @RequestBody Map<String, Object> variables,
-            @RequestParam(required = false) String completedBy) {
+            @Parameter(description = "User completing the task") @RequestParam(required = false) String completedBy) {
 
         if (!taskListService.taskExists(taskId)) {
             return ResponseEntity.notFound().build();
         }
-
         try {
             taskListService.completeUserTask(taskId, completedBy, variables);
+            return ResponseEntity.noContent().build();
         } catch (Exception e) {
             return ResponseEntity.status(500).build();
         }
-        return ResponseEntity.noContent().build();
     }
-
-
-
 }

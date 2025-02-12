@@ -1,5 +1,6 @@
 package org.camunda.consulting.push_based_tasklist.service;
 import io.camunda.zeebe.client.ZeebeClient;
+import org.camunda.consulting.push_based_tasklist.TasklistConstants;
 import org.camunda.consulting.push_based_tasklist.domain.*;
 import org.camunda.consulting.push_based_tasklist.repository.CustomUserTaskRepository;
 import org.camunda.consulting.push_based_tasklist.repository.CustomUserTaskSpecification;
@@ -47,7 +48,7 @@ public class TaskListService {
         Map<String, Object> variables = new HashMap<>();
         variables.put("payload", payload);
         if(completedBy != null) {
-            variables.put("completedBy", completedBy);
+            variables.put(TasklistConstants.COMPLETED_BY_FIELDNAME, completedBy);
         }
         zeebeClient.newCorrelateMessageCommand().messageName("CompleteUserTask")
                 .correlationKey(taskId)
