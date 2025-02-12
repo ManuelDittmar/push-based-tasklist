@@ -17,10 +17,10 @@ camunda:
   client:
     mode: saas
     auth:
-      client-id: Y58kP9cHgr7_BYDp8ldGbWv1-4XWXZQv
-      client-secret: eqvxYEolu5R2RW8~s9-KH7FOWJ.9jBtmvx2izSQ946xvs4.dp~VbJ28vjaGsfXDF
-    cluster-id: 6ee7f607-3379-4f58-b3a7-0b2851b0ea97
+      client-id: xxx
+      client-secret: xxx
+    cluster-id: xxx
     region: bru-2
     zeebe:
       prefer-rest-over-grpc: false
-      rest-address: https://bru-2.zeebe.camunda.io/6ee7f607-3379-4f58-b3a7-0b2851b0ea97
+      rest-address: https://bru-2.zeebe.camunda.io/xxx
