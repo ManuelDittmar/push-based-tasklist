@@ -1,0 +1,26 @@
+spring:
+  application:
+    name: push-based-tasklist
+
+
+  datasource:
+    url: jdbc:h2:mem:testdb
+    driver-class-name: org.h2.Driver
+    username: sa
+    password: sa
+
+  h2:
+    console:
+      enabled: true
+
+camunda:
+  client:
+    mode: saas
+    auth:
+      client-id: Y58kP9cHgr7_BYDp8ldGbWv1-4XWXZQv
+      client-secret: eqvxYEolu5R2RW8~s9-KH7FOWJ.9jBtmvx2izSQ946xvs4.dp~VbJ28vjaGsfXDF
+    cluster-id: 6ee7f607-3379-4f58-b3a7-0b2851b0ea97
+    region: bru-2
+    zeebe:
+      prefer-rest-over-grpc: false
+      rest-address: https://bru-2.zeebe.camunda.io/6ee7f607-3379-4f58-b3a7-0b2851b0ea97
