@@ -26,16 +26,11 @@ public class UserTaskEvents {
     private TaskListService taskListService;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(UserTaskEvents.class);
-    private final CustomUserTaskRepository customUserTaskRepository;
-
-    public UserTaskEvents(CustomUserTaskRepository customUserTaskRepository, UserTaskChangeLogRepository userTaskChangeLogRepository) {
-        this.customUserTaskRepository = customUserTaskRepository;
-    }
 
     @JobWorker(type = TasklistConstants.START_JOB_WORKER_NAME)
     @Transactional
     public void createdUserTask(ActivatedJob job, @VariablesAsType CustomUserTask customUserTask) {
-        LOGGER.info("Creating user task {}", customUserTask.getCustomUserTaskId());
+        LOGGER.debug("Creating user task {}", customUserTask.getCustomUserTaskId());
         customUserTask.setProcessInstanceId(job.getProcessInstanceKey());
         taskListService.saveTask(customUserTask, job.getProcessInstanceKey(), TaskState.CREATED);
         taskListService.addChangeLog(customUserTask.getCustomUserTaskId(), TaskState.CREATED.toString(), null, null, null);
@@ -44,7 +39,7 @@ public class UserTaskEvents {
     @JobWorker(type = TasklistConstants.COMPLETE_JOB_WORKER_NAME)
     @Transactional
     public void completedUserTask(final ActivatedJob job, @VariablesAsType CustomUserTask customUserTask) {
-        LOGGER.info("Completing user task for process instance {}", job.getProcessInstanceKey());
+        LOGGER.debug("Completing user task for process instance {}", job.getProcessInstanceKey());
         taskListService.saveTask(customUserTask, job.getProcessInstanceKey(), TaskState.COMPLETED);
         boolean includesCompletedBy = job.getVariablesAsMap().containsKey(TasklistConstants.COMPLETED_BY_FIELDNAME);
         String toValue = includesCompletedBy ? job.getVariable(TasklistConstants.COMPLETED_BY_FIELDNAME).toString() : null;
@@ -55,7 +50,7 @@ public class UserTaskEvents {
     @JobWorker(type = TasklistConstants.DELETE_JOB_WORKER_NAME)
     @Transactional
     public void cancelledUserTask(ActivatedJob job, @VariablesAsType CustomUserTask customUserTask) {
-        LOGGER.info("Cancelling user task {}", customUserTask.getCustomUserTaskId());
+        LOGGER.debug("Cancelling user task {}", customUserTask.getCustomUserTaskId());
         taskListService.saveTask(customUserTask, job.getProcessInstanceKey(), TaskState.CANCELED);
         taskListService.addChangeLog(customUserTask.getCustomUserTaskId(), TaskState.CANCELED.toString(), null, null, null);
     }
@@ -64,18 +59,7 @@ public class UserTaskEvents {
     @Transactional
     public void updatedUserTask(final ActivatedJob job, @VariablesAsType CustomUserTask customUserTask) {
         LOGGER.debug("Updated user task for process instance {}", job.getProcessInstanceKey());
-        Optional<CustomUserTask> existingTaskOpt = customUserTaskRepository.findById(customUserTask.getCustomUserTaskId());
-
-        if (existingTaskOpt.isPresent()) {
-            CustomUserTask existingTask = existingTaskOpt.get();
-            Map<String, String[]> changes = detectChanges(existingTask, job.getVariablesAsMap());
-
-            for (Map.Entry<String, String[]> entry : changes.entrySet()) {
-                LOGGER.debug("Change in Task {}: {} -> {}", entry.getKey(), entry.getValue()[0], entry.getValue()[1]);
-                taskListService.addChangeLog(customUserTask.getCustomUserTaskId(), "UPDATED", entry.getKey(), entry.getValue()[0], entry.getValue()[1]);
-            }
-        }
-
+        taskListService.updateUserTask(customUserTask.getCustomUserTaskId(), job.getProcessInstanceKey(), job.getVariablesAsMap());
         taskListService.saveTask(customUserTask, job.getProcessInstanceKey(), TaskState.CREATED);
     }
 

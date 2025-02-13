@@ -22,6 +22,8 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import static org.camunda.consulting.push_based_tasklist.util.ChangeListUtil.detectChanges;
+
 @Component
 public class TaskListService {
 
@@ -134,6 +136,21 @@ public class TaskListService {
         customUserTaskRepository.save(customUserTask);
         LOGGER.debug("Task stored in DB: {}", customUserTask);
         return customUserTask;
+    }
+
+    public void updateUserTask(String taskId, long procesInstanceKey,  Map<String, Object> variables) {
+        Optional<CustomUserTask> existingTaskOpt = customUserTaskRepository.findById(taskId);
+
+        if (existingTaskOpt.isPresent()) {
+            CustomUserTask existingTask = existingTaskOpt.get();
+            Map<String, String[]> changes = detectChanges(existingTask, variables);
+
+            for (Map.Entry<String, String[]> entry : changes.entrySet()) {
+                LOGGER.debug("Change in Task {}: {} -> {}", entry.getKey(), entry.getValue()[0], entry.getValue()[1]);
+                addChangeLog(taskId, "UPDATED", entry.getKey(), entry.getValue()[0], entry.getValue()[1]);
+            }
+            saveTask(existingTask, procesInstanceKey, TaskState.CREATED);
+        }
     }
 
 }

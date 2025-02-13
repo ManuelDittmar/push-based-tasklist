@@ -27,7 +27,7 @@ public class CustomUserTask {
     @Id
     private String customUserTaskId;
 
-    @Column(nullable = false, updatable = false)
+    @Column(updatable = false)
     private String customCaseId;
 
     private String source;
