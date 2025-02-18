@@ -13,7 +13,7 @@ import java.time.ZonedDateTime;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/tasks/statistics")
+@RequestMapping("/api/tasks/statistics")
 @Tag(name = "Task Statistics", description = "APIs for retrieving task statistics")
 public class UserTaskStatisticsController {
 

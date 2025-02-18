@@ -22,7 +22,7 @@ import org.slf4j.LoggerFactory;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/tasks")
+@RequestMapping("/api/tasks")
 @Tag(name = "User Tasks", description = "APIs for managing user tasks in Camunda")
 public class UserTaskController {
 
