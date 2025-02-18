@@ -126,6 +126,12 @@ public class TaskListService {
         if (existingTaskOpt.isPresent()) {
             CustomUserTask existingTask = existingTaskOpt.get();
             existingTask.setTaskState(String.valueOf(taskState));
+            existingTask.setAssignee(customUserTask.getAssignee());
+            existingTask.setCandidateGroups(customUserTask.getCandidateGroups());
+            existingTask.setCandidateUsers(customUserTask.getCandidateUsers());
+            existingTask.setDueDate(customUserTask.getDueDate());
+            existingTask.setFollowUpDate(customUserTask.getFollowUpDate());
+            existingTask.setPriority(customUserTask.getPriority());
             LOGGER.debug("Task updated in DB: {}", customUserTask);
             return customUserTaskRepository.save(existingTask);
         }
@@ -149,7 +155,6 @@ public class TaskListService {
                 LOGGER.debug("Change in Task {}: {} -> {}", entry.getKey(), entry.getValue()[0], entry.getValue()[1]);
                 addChangeLog(taskId, "UPDATED", entry.getKey(), entry.getValue()[0], entry.getValue()[1]);
             }
-            saveTask(existingTask, procesInstanceKey, TaskState.CREATED);
         }
     }
 
