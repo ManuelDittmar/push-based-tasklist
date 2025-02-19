@@ -13,7 +13,7 @@ const FormViewer = ({ formSchema, inputContext, taskId, completedBy }) => {
         if (!formInstance.current) {
             formInstance.current = new Form();
             formInstance.current.attachTo(formElement.current);
-            formInstance.current.importSchema(formSchema, { data: inputContext });
+            formInstance.current.importSchema(formSchema,inputContext);
         }
 
         formInstance.current.on("submit", async (event) => {
