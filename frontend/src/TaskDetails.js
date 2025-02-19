@@ -6,11 +6,13 @@ import {
     TableBody, TableCell, Pagination
 } from "@carbon/react";
 import axios from "axios";
+import FormViewer from "./FormViewer";
 
 const TaskDetails = () => {
     const { taskId } = useParams();
     const [task, setTask] = useState(null);
     const [taskHistory, setTaskHistory] = useState([]);
+    const [formSchema, setFormSchema] = useState(null);
     const [page, setPage] = useState(1);
     const [size, setSize] = useState(10);
     const [totalItems, setTotalItems] = useState(0);
@@ -29,6 +31,8 @@ const TaskDetails = () => {
         axios.get(`/api/tasks/${taskId}`)
             .then(response => {
                 setTask(response.data);
+                console.log("✅ Task loaded:", response.data);
+
                 setFormData({
                     dueDate: response.data.dueDate ? new Date(response.data.dueDate) : null,
                     followUpDate: response.data.followUpDate ? new Date(response.data.followUpDate) : null,
@@ -37,8 +41,19 @@ const TaskDetails = () => {
                     candidateGroups: response.data.candidateGroups || [],
                     priority: response.data.priority ?? ""
                 });
+
+                // Load the form schema from the public folder
+                const formPath = "/forms/SubmitPaper.form.json";
+                console.log("🚀 Fetching hardcoded form from:", formPath);
+
+                axios.get(formPath)
+                    .then(res => {
+                        console.log("✅ Form schema loaded:", res.data);
+                        setFormSchema(res.data);
+                    })
+                    .catch(err => console.error("❌ Error loading form schema:", err));
             })
-            .catch(error => console.error("Error fetching task details:", error));
+            .catch(error => console.error("❌ Error fetching task details:", error));
     }, [taskId]);
 
     useEffect(() => {
@@ -112,6 +127,16 @@ const TaskDetails = () => {
                         <TextInput id="processInstanceId" labelText="Instance ID" value={task.processInstanceId} readOnly style={{ width: "100%" }} />
                         <TextInput id="taskState" labelText="Task State" value={task.taskState} readOnly style={{ width: "100%" }} />
                     </div>
+
+                    {formSchema && (
+                        <FormViewer
+                            formSchema={formSchema}
+                            inputContext={task.variables || {}}
+                            taskId={taskId}
+                            completedBy={formData.assignee}
+                        />
+                    )}
+
                 </div>
 
                 <div style={{
@@ -178,7 +203,6 @@ const TaskDetails = () => {
                             </TableBody>
                         </Table>
                     </TableContainer>
-                    <Pagination page={page} pageSize={size} totalItems={totalItems} pageSizes={[5, 10, 20]} onChange={({ page, pageSize }) => { setPage(page); setSize(pageSize); }} />
                 </div>
             )}
         </div>

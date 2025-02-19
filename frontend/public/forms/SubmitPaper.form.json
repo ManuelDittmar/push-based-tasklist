@@ -1,0 +1,179 @@
+{
+  "executionPlatform": "Camunda Cloud",
+  "executionPlatformVersion": "8.6.0",
+  "exporter": {
+    "name": "Camunda Web Modeler",
+    "version": "9f45323"
+  },
+  "schemaVersion": 18,
+  "id": "Form_0g786h8",
+  "components": [
+    {
+      "text": "### Scientific Paper Submission Form",
+      "type": "text",
+      "id": "Heading_0",
+      "layout": {
+        "row": "row_0",
+        "columns": null
+      }
+    },
+    {
+      "text": "##### Author Information",
+      "type": "text",
+      "id": "Subheading_1",
+      "layout": {
+        "row": "row_1",
+        "columns": null
+      }
+    },
+    {
+      "label": "Author Name",
+      "type": "textfield",
+      "id": "Textfield_2",
+      "validate": {
+        "minLength": 2,
+        "required": true
+      },
+      "key": "authorName",
+      "layout": {
+        "row": "row_2",
+        "columns": null
+      }
+    },
+    {
+      "label": "Affiliation",
+      "type": "textfield",
+      "id": "Textfield_3",
+      "validate": {
+        "minLength": 5,
+        "maxLength": 100,
+        "required": true
+      },
+      "key": "affiliation",
+      "layout": {
+        "row": "row_2",
+        "columns": null
+      }
+    },
+    {
+      "label": "Email",
+      "type": "textfield",
+      "id": "Textfield_4",
+      "validate": {
+        "minLength": 5,
+        "maxLength": 100,
+        "required": true
+      },
+      "key": "email",
+      "layout": {
+        "row": "row_2",
+        "columns": null
+      }
+    },
+    {
+      "text": "##### Paper Details",
+      "type": "text",
+      "id": "Subheading_5",
+      "layout": {
+        "row": "row_3",
+        "columns": null
+      }
+    },
+    {
+      "label": "Paper Title",
+      "type": "textfield",
+      "id": "Textfield_6",
+      "validate": {
+        "minLength": 5,
+        "maxLength": 150,
+        "required": true
+      },
+      "key": "paperTitle",
+      "layout": {
+        "row": "row_4",
+        "columns": null
+      }
+    },
+    {
+      "label": "Abstract",
+      "type": "textarea",
+      "id": "Textarea_7",
+      "validate": {
+        "minLength": 50,
+        "maxLength": 1000,
+        "required": true
+      },
+      "key": "abstract",
+      "layout": {
+        "row": "row_4",
+        "columns": null
+      }
+    },
+    {
+      "label": "Paper Category",
+      "values": [
+        {
+          "value": "physics",
+          "label": "Physics"
+        },
+        {
+          "value": "biology",
+          "label": "Biology"
+        },
+        {
+          "value": "chemistry",
+          "label": "Chemistry"
+        },
+        {
+          "value": "etc.",
+          "label": "Etc."
+        }
+      ],
+      "type": "select",
+      "id": "Select_8",
+      "validate": {
+        "required": true
+      },
+      "key": "paperCategory",
+      "layout": {
+        "row": "row_5",
+        "columns": null
+      }
+    },
+    {
+      "text": "##### Additional Information",
+      "type": "text",
+      "id": "Subheading_9",
+      "layout": {
+        "row": "row_6",
+        "columns": null
+      }
+    },
+    {
+      "label": "Agree to Terms and Conditions",
+      "type": "checkbox",
+      "id": "Checkbox_10",
+      "defaultValue": false,
+      "validate": {
+        "required": true
+      },
+      "key": "agreeToTerms",
+      "layout": {
+        "row": "row_7",
+        "columns": null
+      }
+    },
+    {
+      "label": "Submit",
+      "action": "submit",
+      "type": "button",
+      "layout": {
+        "row": "Row_0se1q71",
+        "columns": null
+      },
+      "id": "Field_0vbny5q"
+    }
+  ],
+  "generated": true,
+  "type": "default"
+}
