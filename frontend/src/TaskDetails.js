@@ -38,9 +38,7 @@ const TaskDetails = () => {
     };
 
     const cleanFormData = () => {
-        const formatDate = (date) => {
-            return date ? date.toISOString().split(".")[0] + "Z" : null;
-        };
+        const formatDate = (date) => date ? date.toISOString().split(".")[0] + "Z" : null;
 
         return {
             ...formData,
@@ -62,23 +60,57 @@ const TaskDetails = () => {
     if (!task) return <p>Loading...</p>;
 
     return (
-        <div style={{ padding: "20px", maxWidth: "800px", margin: "auto" }}>
-            <h2>{task.userTaskName}</h2>
-            <p>Case: {task.customCaseId} / Task ID: {task.customUserTaskId}</p>
+        <div style={{
+            display: "grid",
+            gridTemplateColumns: "3fr 0.1fr 1fr",
+            gap: "20px",
+            padding: "20px",
+            margin: "auto",
+            alignItems: "start",
+            width: "100%",
+            overflow: "hidden"
+        }}>
+            {/* Left Column - Read-Only Information */}
+            <div style={{ display: "flex", flexDirection: "column", gap: "10px", padding: "20px" }}>
+                <h3>{task.userTaskName}</h3>
+                <p>Case: {task.customCaseId} / Task ID: {task.customUserTaskId}</p>
 
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px", marginBottom: "20px" }}>
-                <TextInput id="createdAt" labelText="Created" value={task.createdAt} readOnly />
-                <TextInput id="source" labelText="Source" value={task.source} readOnly />
-                <TextInput id="processInstanceId" labelText="Instance ID" value={task.processInstanceId} readOnly />
-                <TextInput id="taskState" labelText="Task State" value={task.taskState} readOnly />
+                {/* Read-Only Fields in Two Columns */}
+                <div style={{
+                    display: "grid",
+                    gridTemplateColumns: "1fr 1fr",
+                    gap: "10px"
+                }}>
+                    <TextInput id="createdAt" labelText="Created" value={task.createdAt} readOnly style={{ width: "100%" }} />
+                    <TextInput id="source" labelText="Source" value={task.source} readOnly style={{ width: "100%" }} />
+                    <TextInput id="processInstanceId" labelText="Instance ID" value={task.processInstanceId} readOnly style={{ width: "100%" }} />
+                    <TextInput id="taskState" labelText="Task State" value={task.taskState} readOnly style={{ width: "100%" }} />
+                </div>
             </div>
 
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px", marginBottom: "20px" }}>
+            {/* Vertical Divider */}
+            <div style={{
+                backgroundColor: "#ccc",
+                width: "2px",
+                height: "100%"
+            }} />
+
+            {/* Right Column - Editable Fields + Submit Button */}
+            <div style={{
+                display: "flex",
+                flexDirection: "column",
+                gap: "16px",
+                justifyContent: "flex-start",
+                alignItems: "stretch",
+                padding: "20px",
+                width: "100%"
+            }}>
                 <TextInput
                     id="assignee"
                     labelText="Assignee"
                     value={formData.assignee}
                     onChange={(e) => handleChange("assignee", e.target.value)}
+                    style={{ width: "100%", minWidth: 0 }}
                 />
                 <TextInput
                     id="priority"
@@ -86,16 +118,15 @@ const TaskDetails = () => {
                     type="number"
                     value={formData.priority}
                     onChange={(e) => handleChange("priority", e.target.value)}
+                    style={{ width: "100%", minWidth: 0 }}
                 />
-            </div>
-
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px", marginBottom: "20px" }}>
                 <TextInput
                     id="candidateUsers"
                     labelText="Candidate Users"
                     value={formData.candidateUsers.join(", ")}
                     placeholder="Comma-separated"
                     onChange={(e) => handleChange("candidateUsers", e.target.value.split(",").map(u => u.trim()))}
+                    style={{ width: "100%", minWidth: 0 }}
                 />
                 <TextInput
                     id="candidateGroups"
@@ -103,40 +134,39 @@ const TaskDetails = () => {
                     value={formData.candidateGroups.join(", ")}
                     placeholder="Comma-separated"
                     onChange={(e) => handleChange("candidateGroups", e.target.value.split(",").map(g => g.trim()))}
+                    style={{ width: "100%", minWidth: 0 }}
                 />
+
+                {/* Date Pickers and Button Wrapper */}
+                <div style={{ display: "flex", gap: "10px", width: "100%" }}>
+                    <DatePicker datePickerType="single" onChange={(dates) => handleChange("followUpDate", dates.length > 0 ? dates[0] : null)}>
+                        <DatePickerInput
+                            id="followUpDate"
+                            labelText="Follow-up Date"
+                            placeholder="yyyy-mm-dd"
+                            readOnly
+                            style={{ width: "100%", minWidth: 0 }}
+                        />
+                    </DatePicker>
+
+                    <DatePicker datePickerType="single" onChange={(dates) => handleChange("dueDate", dates.length > 0 ? dates[0] : null)}>
+                        <DatePickerInput
+                            id="dueDate"
+                            labelText="Due Date"
+                            placeholder="yyyy-mm-dd"
+                            readOnly
+                            style={{ width: "100%", minWidth: 0 }}
+                        />
+                    </DatePicker>
+                </div>
+
+                {/* Button that takes the full width of Date Pickers */}
+                <div style={{ width: "100%" }}>
+                    <Button kind="primary" onClick={handleUpdate} style={{ width: "100%" }}>
+                        Update
+                    </Button>
+                </div>
             </div>
-
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px", marginBottom: "20px" }}>
-                <DatePicker
-                    datePickerType="single"
-                    value={formData.followUpDate ? [formData.followUpDate] : []}
-                    onChange={(dates) => handleChange("followUpDate", dates.length > 0 ? dates[0] : null)}
-                >
-                    <DatePickerInput
-                        id="followUpDate"
-                        labelText="Follow-up Date"
-                        placeholder="yyyy-mm-dd"
-                        readOnly
-                        style={{ width: "100%" }}
-                    />
-                </DatePicker>
-
-                <DatePicker
-                    datePickerType="single"
-                    value={formData.dueDate ? [formData.dueDate] : []}
-                    onChange={(dates) => handleChange("dueDate", dates.length > 0 ? dates[0] : null)}
-                >
-                    <DatePickerInput
-                        id="dueDate"
-                        labelText="Due Date"
-                        placeholder="yyyy-mm-dd"
-                        readOnly
-                        style={{ width: "100%" }}
-                    />
-                </DatePicker>
-            </div>
-
-            <Button kind="primary" onClick={handleUpdate}>Update</Button>
         </div>
     );
 };
