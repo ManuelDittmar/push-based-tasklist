@@ -1,6 +1,8 @@
 # Push-Based Tasklist
 
 > ### ⚠️ Disclaimer
+> 
+> ---
 > This project is created **solely for demonstration purposes** to illustrate a conceptual solution.  
 > It is **not intended for production use** and may lack security hardening, performance optimizations,  
 > or best practices required for a real-world deployment.
