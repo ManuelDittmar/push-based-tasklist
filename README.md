@@ -1,15 +1,13 @@
 # Push-Based Tasklist
 
 > ### ⚠️ Disclaimer
-> 
+
+> **💡 Note:** If the frontend looks questionable, that's because it was built by a **backend engineer**.  
+> Expect functionality over aesthetics, and don’t be surprised if the CSS has an existential crisis.
 > ---
 > This project is created **solely for demonstration purposes** to illustrate a conceptual solution.  
 > It is **not intended for production use** and may lack security hardening, performance optimizations,  
 > or best practices required for a real-world deployment.
-> ---
-> **💡 Note:** If the frontend looks questionable, that's because it was built by a **backend engineer**.  
-> Expect functionality over aesthetics, and don’t be surprised if the CSS has an existential crisis.
-
 
 ## Overview
 The **Push-Based Tasklist** is a web application that provides a task management interface. It integrates with Camunda 8 SaaS and leverages the Job Worker Concept to retrieve information about a task.
